@@ -22,11 +22,18 @@ class SearchViewController: UIViewController {
         configureLogoImageView()
         configureUsernameTextField()
         configureCallToActionButton()
+        
+        createDismissKeyboardTapGesture()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = true
+    }
+    
+    private func createDismissKeyboardTapGesture(){
+        let tap = UITapGestureRecognizer(target: self.view, action: #selector(view.endEditing))
+        view.addGestureRecognizer(tap)
     }
     
     private func configureLogoImageView(){
@@ -44,6 +51,7 @@ class SearchViewController: UIViewController {
     
     private func configureUsernameTextField(){
         view.addSubview(usernameTextField)
+        usernameTextField.delegate = self
         
         NSLayoutConstraint.activate([
             usernameTextField.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 48),
@@ -65,4 +73,13 @@ class SearchViewController: UIViewController {
     }
     
     
+}
+
+
+extension SearchViewController: UITextFieldDelegate{
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        print("Did tap return")
+        
+        return true
+    }
 }
