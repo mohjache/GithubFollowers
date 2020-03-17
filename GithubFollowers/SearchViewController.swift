@@ -14,6 +14,10 @@ class SearchViewController: UIViewController {
     let usernameTextField   = GFTextField()
     let callToActionButton  = GFButton(backgroundColour: .systemGreen, title: "Get Followers")
     
+    var isUsernameEntered : Bool {
+        return !usernameTextField.text!.isEmpty
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -34,6 +38,19 @@ class SearchViewController: UIViewController {
     private func createDismissKeyboardTapGesture(){
         let tap = UITapGestureRecognizer(target: self.view, action: #selector(view.endEditing))
         view.addGestureRecognizer(tap)
+    }
+    
+    @objc private func pushFollowerListViewController(){
+        guard isUsernameEntered else {
+            presentGFAlertOnMainThread(title: "Empty Username", message: "Please enter a username 😁.", buttonTitle: "Ok")
+            return
+        }
+        
+        let followerListViewController = FollowerListViewController()
+        followerListViewController.username = usernameTextField.text
+        followerListViewController.title = usernameTextField.text
+        
+        navigationController?.pushViewController(followerListViewController, animated: true)
     }
     
     private func configureLogoImageView(){
@@ -63,6 +80,7 @@ class SearchViewController: UIViewController {
     
     private func configureCallToActionButton(){
         view.addSubview(callToActionButton)
+        callToActionButton.addTarget(self, action: #selector(pushFollowerListViewController), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
             callToActionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
@@ -79,7 +97,7 @@ class SearchViewController: UIViewController {
 extension SearchViewController: UITextFieldDelegate{
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         print("Did tap return")
-        
+        pushFollowerListViewController()
         return true
     }
 }
